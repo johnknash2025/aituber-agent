@@ -1,3 +1,6 @@
+from ollama_util import ask_ollama
+from youtube_util import get_live_chat_id, fetch_comments
+from obs_util import display_comment
 import os
 import time
 import requests as http
@@ -19,39 +22,7 @@ VIDEO_ID = os.getenv("YOUTUBE_VIDEO_ID")
 # API URLの準備
 YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/liveChat/messages"
 
-# liveChatId を取得するための関数
-def get_live_chat_id():
-    url = f"https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id={VIDEO_ID}&key={API_KEY}"
-    res = http.get(url)
-    data = res.json()
-    return data["items"][0]["liveStreamingDetails"]["activeLiveChatId"]
-
-# コメント取得
-def fetch_comments(chat_id, page_token=None):
-    params = {
-        "liveChatId": chat_id,
-        "part": "snippet,authorDetails",
-        "key": API_KEY,
-    }
-    if page_token:
-        params["pageToken"] = page_token
-    res = http.get(YOUTUBE_API_URL, params=params)
-    return res.json()
-
-# OBSにコメントを表示
-def display_comment(text):
-    try:
-        ws = obsws(host, port, password)
-        ws.connect()
-        ws.call(requests.SetInputSettings(
-            inputName="AIコメント",
-            inputSettings={"text": text},
-            overlay=True
-        ))
-        ws.disconnect()
-    except Exception as e:
-        print("OBS送信エラー:", e)
-
+# メインループ
 # メインループ
 def main():
     chat_id = get_live_chat_id()
@@ -63,12 +34,19 @@ def main():
         for item in data.get("items", []):
             msg = item["snippet"]["displayMessage"]
             msg_id = item["id"]
+            author = item["authorDetails"]["displayName"]
             if msg_id not in seen:
-                print("新コメント:", msg)
-                display_comment(msg)
+                print(f"{author}: {msg}")
+                
+                # Ollamaで返答を作成
+                prompt = f"次のユーザーコメントに親しみを込めてAIとして答えてください：「{author}」さんのコメント『{msg}』"
+                ai_reply = ask_ollama(prompt)
+
+                print(f"AI: {ai_reply}")
+                display_comment(ai_reply)
                 seen.add(msg_id)
+
         next_page_token = data.get("nextPageToken")
         time.sleep(5)
-
 if __name__ == "__main__":
     main()
