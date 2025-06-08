@@ -7,6 +7,8 @@ import requests as http
 from dotenv import load_dotenv
 from obswebsocket import obsws, requests
 
+
+
 # .env 読み込み
 load_dotenv()
 
@@ -19,18 +21,21 @@ password = os.getenv("OBS_PASSWORD")
 API_KEY = os.getenv("YOUTUBE_API_KEY")
 VIDEO_ID = os.getenv("YOUTUBE_VIDEO_ID")
 
+# 動画IDとAPIキーの設定
+
+
 # API URLの準備
 YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/liveChat/messages"
 
 # メインループ
 # メインループ
 def main():
-    chat_id = get_live_chat_id()
+    chat_id = get_live_chat_id(VIDEO_ID, API_KEY)
     next_page_token = None
     seen = set()
 
     while True:
-        data = fetch_comments(chat_id, next_page_token)
+        data = fetch_comments(chat_id, API_KEY, next_page_token)
         for item in data.get("items", []):
             msg = item["snippet"]["displayMessage"]
             msg_id = item["id"]
