@@ -1,20 +1,27 @@
 from obswebsocket import obsws, requests
+from dotenv import load_dotenv
+import os
+import sys
 
-# OBSのWebSocket設定
-host = "localhost"
-port = 4455
-password = "あなたが設定したパスワード"
+load_dotenv()
 
-# 接続
+host = os.getenv("OBS_HOST", "localhost")
+port = int(os.getenv("OBS_PORT", 4455))
+password = os.getenv("OBS_PASSWORD")
+
+text = sys.argv[1] if len(sys.argv) > 1 else "こんにちは！AIからの返事です。"
+
 ws = obsws(host, port, password)
-ws.connect()
 
-# ソースを更新（例：「AIコメント」というソースに文字を表示）
-response = ws.call(requests.SetInputSettings(
-    inputName="AIコメント",
-    inputSettings={"text": "こんにちは！AIからの返事です。"},
-    overlay=True
-))
-
-print("表示完了")
-ws.disconnect()
+try:
+    ws.connect()
+    ws.call(requests.SetInputSettings(
+        inputName="AIコメント",
+        inputSettings={"text": text},
+        overlay=True
+    ))
+    print("表示完了")
+except Exception as e:
+    print(f"エラー: {e}")
+finally:
+    ws.disconnect()
