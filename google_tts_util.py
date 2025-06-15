@@ -4,8 +4,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# サービスアカウントキーのパスを設定
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/keigofukumoto/Documents/feisty-return-462205-n8-b7cdd423b72d.json"
+# サービスアカウントキーのパスは環境変数から読み込む
+credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+if credentials_path:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
 
 def text_to_speech(text, language_code="ja-JP"):
     """Google Cloud Text-to-Speechでテキストを音声に変換"""
