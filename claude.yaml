@@ -1,0 +1,89 @@
+# Claude Code Configuration for aituber-agent
+# This file configures how Claude Code interacts with this repository
+
+# Project metadata
+project:
+  name: "aituber-agent"
+  description: "AI-powered virtual YouTuber agent with text-to-speech and streaming capabilities"
+  type: "python"
+
+# Development workflow commands
+commands:
+  # Install dependencies using uv
+  install: "uv sync"
+  
+  # Run the main application
+  run: "uv run python main.py"
+  
+  # Code formatting and linting
+  format: "uv run ruff format ."
+  lint: "uv run ruff check ."
+  
+  # Type checking (if mypy is added)
+  typecheck: "uv run mypy ."
+  
+  # Run tests (if tests are added)
+  test: "uv run pytest"
+
+# File patterns to include/exclude from Claude's analysis
+files:
+  include:
+    - "*.py"
+    - "*.md"
+    - "*.yml"
+    - "*.yaml"
+    - "*.toml"
+    - "*.txt"
+  
+  exclude:
+    - "__pycache__/"
+    - "*.pyc"
+    - ".git/"
+    - "uv.lock"
+    - ".DS_Store"
+
+# Code style preferences
+preferences:
+  # Python style guide
+  python:
+    line_length: 88
+    style_guide: "black"
+    import_sorting: "isort"
+    docstring_style: "google"
+  
+  # Commit message style
+  commit_style: "conventional"
+  
+  # Testing framework preference
+  testing_framework: "pytest"
+
+# Claude-specific behavior
+claude:
+  # Always run linting after code changes
+  auto_lint: true
+  
+  # Suggest tests for new functionality
+  suggest_tests: true
+  
+  # Include type hints in Python code
+  include_type_hints: true
+  
+  # Be concise in explanations
+  concise_mode: true
+
+# AI/ML specific considerations
+ai_ml:
+  # This project uses various AI services
+  services:
+    - "Google TTS"
+    - "Voicevox"
+    - "Ollama"
+    - "YouTube API"
+    - "OBS Studio integration"
+  
+  # Key components
+  components:
+    - "Text-to-speech processing"
+    - "Video streaming utilities"
+    - "Comment processing"
+    - "Voice synthesis"
