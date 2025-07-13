@@ -1,0 +1,6 @@
+requests
+python-dotenv
+obs-websocket-py
+google-cloud-texttospeech
+httpx
+asyncio
